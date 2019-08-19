@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
 
 namespace RoomTempMQTTConsumer
 {
@@ -6,7 +8,15 @@ namespace RoomTempMQTTConsumer
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            // Load from configuration
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+
+            var mqqtConfig = config.GetSection("MqttClient");
+
+            Console.WriteLine(mqqtConfig.GetSection("ClientId").Value);
         }
     }
 }
