@@ -4,6 +4,7 @@ using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace RoomTempMQTTConsumer
 {
@@ -27,8 +28,11 @@ namespace RoomTempMQTTConsumer
         {
             ConfigureService();
 
+            Task.Run(async () =>
+            {
+               _mqttService.Run();
 
-            _mqttService.Run();
+            }).GetAwaiter().GetResult();
 
 
             Console.WriteLine("Press any key to exit");
