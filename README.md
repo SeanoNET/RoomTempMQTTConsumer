@@ -57,7 +57,7 @@ CREATE TABLE [dbo].[TempMonData](
 GO
 ```
 
-Notice the table name `Test` is set in the configuration file under `DataRepository` `TableName`
+Notice the table name `TempMonData` is set in the configuration file under `DataRepository` `TableName`
 
 ## MQTT device
 
