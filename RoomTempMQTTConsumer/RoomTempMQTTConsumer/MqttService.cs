@@ -24,7 +24,7 @@ namespace RoomTempMQTTConsumer
 
         public MqttService(IConfiguration configuration)
         {
-            _dataRepository = new DataRepository(configuration.GetSection("DataRepository").Value);
+            _dataRepository = new DataRepository(configuration.GetSection("DataRepository"));
 
             var mqqtConfig = configuration.GetSection("MqttClient");   
             
