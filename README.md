@@ -26,7 +26,7 @@ The `MqttClient` and `DataRepository` configuration values are stored in `appset
 |  | MqttSubscribeTopic | The MQTT topic if using the [RoomTempDevice-MQTT](https://github.com/SeanoNET/RoomTempDevice-MQTT) this will be the same topic set in `topic`|
 | DataRepository |  | MSSQL Server data repository settings |
 |  | DataSource | MSSQL connection string |
-|  | TableName | MSSQL table name to save the metric data see [Creating SQL Table](#creating-sql-table)|
+|  | TableName | MSSQL table name to save the metric data see [Creating the SQL Table](#creating-the-sql-table)|
 
 Example:
 ```JSON
@@ -39,18 +39,17 @@ Example:
   },
   "DataRepository": {
     "DataSource": "Server=(local);Database=MQTT;Trusted_Connection=True;",
-    "TableName": "Test"
+    "TableName": "TempMonData"
   }
 }
 ```
 
-
 ### Creating the SQL Table
 
-The payload [MetricData](RoomTempMQTTConsumer/Entities/MetricData.cs) will be saved into a sql table, create the sql table below in your sql instance
+The payload [MetricData](RoomTempMQTTConsumer/RoomTempMQTTConsumer/Entities/MetricData.cs) will be saved into a sql table, create the sql table below in your sql instance
 
 ```SQL
-CREATE TABLE [dbo].[Test](
+CREATE TABLE [dbo].[TempMonData](
 	[Temperature] [decimal](18, 2) NULL,
 	[Humidity] [decimal](18, 2) NULL,
 	[MeasuredAt] [datetime] NULL
