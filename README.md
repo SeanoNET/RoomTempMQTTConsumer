@@ -5,8 +5,8 @@ A MQTT client that consumes and saves metric data sent from the MXChip AZ3166 Io
 
 These instructions will get your clone of RoomTempMQTTConsumer up and running on your local machine for development.
 
-- Download and install [.NET Core 2.2+](https://dotnet.microsoft.com/download) 
-- `cd /RoomTempMQTTConsumer/RoomTempMQTTConsumer`
+- Download and install [.NET Core 3.1+](https://dotnet.microsoft.com/download) 
+- `cd /RoomTempMQTTConsumer/src`
 - `dotnet restore`
 - `dotnet build`
 - Create your `appsettings.json` file see [Configuration](#configuration) 
@@ -17,30 +17,22 @@ These instructions will get your clone of RoomTempMQTTConsumer up and running on
 
 The `MqttClient` and `DataRepository` configuration values are stored in `appsettings.json`
 
-| Section| Name|Description|
-|---|---|---|
-| MqttClient |  | Mqtt client settings |
-|  | ClientId | The MQTT device client id|
-|  | MqttServerIp | The MQTT broker server IP|
-|  | MqttServerPort | The MQTT broker server port|
-|  | MqttSubscribeTopic | The MQTT topic if using the [RoomTempDevice-MQTT](https://github.com/SeanoNET/RoomTempDevice-MQTT) this will be the same topic set in `topic`|
-| DataRepository |  | MSSQL Server data repository settings |
-|  | DataSource | MSSQL connection string |
-|  | TableName | MSSQL table name to save the metric data see [Creating the SQL Table](#creating-the-sql-table)|
+| Name|Description|
+|---|---|
+| ClientId | The MQTT device client id|
+| MqttServerIp | The MQTT broker server IP|
+| MqttServerPort | The MQTT broker server port|
+| MqttSubscribeTopic | The MQTT topic if using the [RoomTempDevice-MQTT](https://github.com/SeanoNET/RoomTempDevice-MQTT) this will be the same topic set in `topic`|
+| DataSource | MSSQL connection string |
 
 Example:
 ```JSON
 {
-  "MqttClient": {
-    "ClientId": "metric-consumer",
-    "MqttServerIp": "localhost",
-    "MqttServerPort": "1883",
-    "MqttSubscribeTopic": "home/room/temp-mon/data"
-  },
-  "DataRepository": {
-    "DataSource": "Server=(local);Database=MQTT;Trusted_Connection=True;",
-    "TableName": "TempMonData"
-  }
+  "ClientId": "metric-consumer",
+  "MqttServerIp": "localhost",
+  "MqttServerPort": "1883",
+  "MqttSubscribeTopic": "home/room/temp-mon/data",
+  "DataSource": "Server=(local);Database=MQTT;Trusted_Connection=True;"
 }
 ```
 ## Running locally in Docker
