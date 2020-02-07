@@ -43,21 +43,76 @@ Example:
   }
 }
 ```
+## Running locally in Docker
 
-### Creating the SQL Table
+Install [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
-The payload [MetricData](RoomTempMQTTConsumer/RoomTempMQTTConsumer/Entities/MetricData.cs) will be saved into a sql table, create the sql table below in your sql instance
+### Building the image
 
-```SQL
-CREATE TABLE [dbo].[TempMonData](
-	[Temperature] [decimal](18, 2) NULL,
-	[Humidity] [decimal](18, 2) NULL,
-	[MeasuredAt] [datetime] NULL
-) ON [PRIMARY]
-GO
+Build the image with
+
+`docker build -t roomtempmqttconsumer:latest .`
+
+### Running in Docker Compose
+
+create `docker-compose.yml`
+
+```
+version: '3'
+
+services:
+
+  consumer:
+    build: .
+    image: seanonet/roomtempmqttconsumer:latest
+    environment:
+      DataSource: Server=dbdata;Database=MQTT;User Id=sa;Password=St0ngPassword1!;
+      ClientId: metric-consumer
+      MqttServerIp: mqtt
+      MqttServerPort: 1883
+      MqttSubscribeTopic: home/room/temp-mon/data
+    depends_on:
+        - mqtt
+        - dbdata
+  mqtt:
+    image: eclipse-mosquitto:1.6
+    ports:
+        - 1883:1883
+        - 9001:9001
+    volumes:
+        - mosquitto:/mosquitto/data
+        - mosquitto:/mosquitto/log eclipse-mosquitto
+  dbdata:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+        - 1433:1433
+    environment:
+        SA_PASSWORD: St0ngPassword1!
+        ACCEPT_EULA: Y
+        MSSQL_PID: Express
+    volumes:
+        - dbsql:/var/opt/mssql
+  dashboard:
+    image: seanonet/roomtempdashboard:latest
+    ports:
+        - 5000:5000
+    environment:
+        DataSource: Server=dbdata;Database=MQTT;User Id=sa;Password=St0ngPassword1!;
+        ASPNETCORE_URLS: http://0.0.0.0:5000
+
+volumes:
+    mosquitto:
+    dbsql:
 ```
 
-Notice the table name `TempMonData` is set in the configuration file under `DataRepository` `TableName`
+Start stack with `docker-compose up --build`
+
+## Running on Swarm
+
+Init swarm with `docker swarm init` and create a `docker-compose.yml` see [Running in Docker Compose](#running-in-docker-compose)
+
+`docker stack deploy --compose-file docker-compose.yml roomtempstack`
+
 
 ## MQTT device
 
