@@ -58,7 +58,7 @@ services:
     build: .
     image: seanonet/roomtempmqttconsumer:latest
     environment:
-      DataSource: Server=dbdata;Database=MQTT;User Id=sa;Password=St0ngPassword1!;
+      DataSource: Host=dbdata;Database=MQTT;Username=postgres;Password=St0ngPassword1!;
       ClientId: metric-consumer
       MqttServerIp: mqtt
       MqttServerPort: 1883
@@ -75,15 +75,13 @@ services:
         - mosquitto:/mosquitto/data
         - mosquitto:/mosquitto/log eclipse-mosquitto
   dbdata:
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    image: postgres:12
     ports:
-        - 1433:1433
+    - 5432:5432
     environment:
-        SA_PASSWORD: St0ngPassword1!
-        ACCEPT_EULA: Y
-        MSSQL_PID: Express
+        POSTGRES_PASSWORD: St0ngPassword1!
     volumes:
-        - dbsql:/var/opt/mssql
+        - dbsql:/var/lib/postgresql/data
   dashboard:
     image: seanonet/roomtempdashboard:latest
     ports:
