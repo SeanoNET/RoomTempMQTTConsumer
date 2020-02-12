@@ -1,0 +1,80 @@
+name: Build Docker CLI
+
+on:
+  pull_request:
+    branches: 'master'
+    paths:
+      - '.github/workflows/*'
+      - 'Dockerfile**'
+      - 'src/**'
+
+  push:
+    branches: 'master'
+    tags: 'v*'
+    paths:
+      - '.github/workflows/*'
+      - 'Dockerfile**'
+      - 'src/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest    
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Login to github registry
+        uses: actions-hub/docker/login@master
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          
+      - name: Prepare
+        id: prepare
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
+          else
+            echo ::set-output name=version::snapshot
+          fi
+          echo ::set-output name=build_date::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          echo ::set-output name=docker_image::seanonet/roomtempmqttconsumer
+
+      - name: Build
+        if: success() 
+        run: docker build -f Dockerfile .
+
+      - name: Build arm32 
+        if: success() 
+        run: docker build -f Dockerfile.debian-arm32 .  
+
+      - name: Build With Tag
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        run: docker build -t "${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }}" -t "${{ steps.prepare.outputs.docker_image }}:latest" -f Dockerfile .
+
+      - name: Build arm32 With Tag
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        run: docker build -t "${{ steps.prepare.outputs.docker_image }}:linux-arm-${{ steps.prepare.outputs.version }}" -t "${{ steps.prepare.outputs.docker_image }}:linux-arm-latest" -f Dockerfile.debian-arm32 .          
+        
+      - name: Push latest image
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        uses: actions-hub/docker@master
+        with:
+          args: push "${{ steps.prepare.outputs.docker_image }}:latest"
+
+      - name: Push latest version image
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        uses: actions-hub/docker@master
+        with:
+          args: push "${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }}"          
+
+      - name: Push latest arm image
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        uses: actions-hub/docker@master
+        with:
+          args: push "${{ steps.prepare.outputs.docker_image }}:linux-arm-latest"
+
+      - name: Push latest arm version image
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        uses: actions-hub/docker@master
+        with:
+          args: push "${{ steps.prepare.outputs.docker_image }}:linux-arm-${{ steps.prepare.outputs.version }}" 

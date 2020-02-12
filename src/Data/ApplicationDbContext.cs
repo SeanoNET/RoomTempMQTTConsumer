@@ -17,11 +17,6 @@ namespace Consumer.Data
             _configuration = configuration;
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_configuration.GetSection("DataSource").Value);
-        }
-
         public DbSet<SensorData> SensorData { get; set; }
 
     }

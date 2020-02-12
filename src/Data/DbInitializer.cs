@@ -35,6 +35,7 @@ namespace Consumer.Data
                 catch (Exception ex)
                 {
                     _logger.LogError("Error on db init", ex);
+                    _logger.LogError(ex.Message);
                     return;
                 }
             }

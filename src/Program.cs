@@ -30,7 +30,7 @@ namespace Consumer
                         .Build();
 
                     services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(config.GetSection("DataSource").Value));
+                    options.UseNpgsql(config.GetSection("DataSource").Value));
 
                     services.AddTransient<IDbInitializer, DbInitializer>();
                     services.AddHostedService<Worker>();
