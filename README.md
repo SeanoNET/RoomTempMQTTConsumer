@@ -1,21 +1,26 @@
 # RoomTempMQTTConsumer
-A MQTT client that consumes and saves metric data sent from the MXChip AZ3166 IoT Devkit
+![Build Docker CLI](https://github.com/SeanoNET/RoomTempMQTTConsumer/workflows/Build%20Docker%20CLI/badge.svg)
+
+A MQTT client that consumes and saves metric data sent from the MXChip AZ3166 IoT Devkit see [RoomTempDevice-MQTT](https://github.com/SeanoNET/RoomTempDevice-MQTT). For viewing the metrics in a browser see [RoomTempDashboard](https://github.com/SeanoNET/RoomTempDashboard/)
 
 ## Getting Started
 
 These instructions will get your clone of RoomTempMQTTConsumer up and running on your local machine for development.
 
+Clone this [repository](https://github.com/SeanoNET/RoomTempMQTTConsumer).
+
+`git clone https://github.com/SeanoNET/RoomTempMQTTConsumer.git`
+
 - Download and install [.NET Core 3.1+](https://dotnet.microsoft.com/download) 
 - `cd /RoomTempMQTTConsumer/src`
 - `dotnet restore`
 - `dotnet build`
-- Create your `appsettings.json` file see [Configuration](#configuration) 
-- `dotnet run --project RoomTempMQTTConsumer/RoomTempMQTTConsumer.csproj`
-
+- Create `appsettings.json` file see [Configuration](#configuration) 
+- `dotnet run`
 
 ### Configuration
 
-The `MqttClient` and `DataRepository` configuration values are stored in `appsettings.json`
+Create and configure the `MqttClient` and the [Postgres](https://www.postgresql.org/) `DataSource` connection string in `appsettings.json`.
 
 | Name|Description|
 |---|---|
@@ -25,29 +30,23 @@ The `MqttClient` and `DataRepository` configuration values are stored in `appset
 | MqttSubscribeTopic | The MQTT topic if using the [RoomTempDevice-MQTT](https://github.com/SeanoNET/RoomTempDevice-MQTT) this will be the same topic set in `topic`|
 | DataSource | MSSQL connection string |
 
-Example:
+`appsettings.json`
 ```JSON
 {
   "ClientId": "metric-consumer",
   "MqttServerIp": "localhost",
   "MqttServerPort": "1883",
   "MqttSubscribeTopic": "home/room/temp-mon/data",
-  "DataSource": "Server=(local);Database=MQTT;Trusted_Connection=True;"
+  "DataSource": "Host=dbdata;Database=MQTT;Username=postgres;Password=r00mTemp1!;"
 }
 ```
 ## Running locally in Docker
 
 Install [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
-### Building the image
-
-Build the image with
-
-`docker build -t roomtempmqttconsumer:latest .`
-
 ### Running in Docker Compose
 
-create `docker-compose.yml`
+Create `docker-compose.yml`
 
 ```
 version: '3'
@@ -56,7 +55,7 @@ services:
 
   consumer:
     build: .
-    image: seanonet/roomtempmqttconsumer:latest
+    image: roomtempmqttconsumer
     environment:
       DataSource: Host=dbdata;Database=MQTT;Username=postgres;Password=St0ngPassword1!;
       ClientId: metric-consumer
@@ -95,15 +94,13 @@ volumes:
     dbsql:
 ```
 
-Start stack with `docker-compose up --build`
+Start the stack with `docker-compose up --build`
 
-## Running on Swarm
+## Running Stack in Production on Swarm
 
-Init swarm with `docker swarm init` and create a `docker-compose.yml` see [Running in Docker Compose](#running-in-docker-compose)
-
-`docker stack deploy --compose-file docker-compose.yml roomtempstack`
+For running in production see [RoomTempStack](https://github.com/SeanoNET/RoomTempStack)
 
 
 ## MQTT device
 
-To send data to this consumer see [RoomTempDevice-MQTT](https://github.com/SeanoNET/RoomTempDevice-MQTT)
+To send data to this consumer see [RoomTempDevice-MQTT](https://github.com/SeanoNET/RoomTempDevice-MQTT) or you can test with [MQTT Explorer](http://mqtt-explorer.com/)
