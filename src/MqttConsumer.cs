@@ -59,7 +59,10 @@ namespace Consumer
 
         private async void OnDisconnected(MqttClientDisconnectedEventArgs e)
         {
-            _logger.LogWarning("Disconnected from MQTT server");
+            _logger.LogWarning($"Disconnected from MQTT server: {e.Exception.Message}");
+
+            if(e.Exception != null)
+                _logger.LogError($"Error: {e.Exception.Message}");
 
             await Task.Delay(TimeSpan.FromSeconds(5));
 
@@ -128,7 +131,7 @@ namespace Consumer
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occured.");
+                _logger.LogError($"An error occurred: {ex.Message}");
             }
 
 
