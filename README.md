@@ -37,7 +37,7 @@ Create and configure the `MqttClient` and the [Postgres](https://www.postgresql.
   "MqttServerIp": "localhost",
   "MqttServerPort": "1883",
   "MqttSubscribeTopic": "home/room/temp-mon/data",
-  "DataSource": "Host=dbdata;Database=MQTT;Username=postgres;Password=r00mTemp1!;"
+  "DataSource": "Host=dbdata;Database=MQTT;Username=postgres;Password=St0ngPassword1!;"
 }
 ```
 ## Running locally in Docker

@@ -59,7 +59,7 @@ namespace Consumer
 
         private async void OnDisconnected(MqttClientDisconnectedEventArgs e)
         {
-            _logger.LogWarning($"Disconnected from MQTT server: {e.Exception.Message}");
+            _logger.LogWarning($"Disconnected from MQTT server");
 
             if(e.Exception != null)
                 _logger.LogError($"Error: {e.Exception.Message}");
